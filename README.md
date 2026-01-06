@@ -1,170 +1,124 @@
-# ============================================================
-# 📊 Crypto Trade Sentiment EDA
-# ============================================================
+# 📊 Trader Performance vs Market Sentiment (Fear & Greed Index)
 
-# ------------------------------------------------------------
-# 📌 Project Overview
-# ------------------------------------------------------------
-# This project studies the relationship between trader
-# performance and market sentiment using the Crypto
-# Fear & Greed Index.
-#
-# Instead of predicting price direction, the analysis
-# focuses on understanding how sentiment affects:
-#   - Trader behavior
-#   - Risk-taking
-#   - Execution style
-#   - Probability of winning
-#
-# The study is conducted at a per-trade level to preserve
-# behavioral signals that are usually lost in aggregated data.
+## 📌 Project Overview
 
-# ------------------------------------------------------------
-# 🎯 Objectives
-# ------------------------------------------------------------
-# - Analyze how market sentiment impacts:
-#     • Trade size
-#     • Execution aggressiveness
-#     • Win rate
-#     • Risk-adjusted returns
-#     • Loss severity
-# - Identify sentiment regimes that are favorable or risky
-# - Extract insights useful for real-world traders
+This project analyzes the relationship between individual trader performance and overall market sentiment, using the Crypto Fear & Greed Index.
+Instead of predicting prices, the focus is on understanding how sentiment influences trader behavior, execution style, risk, and profitability.
 
-# ------------------------------------------------------------
-# 📂 Data Summary
-# ------------------------------------------------------------
-# Trades data:
-#   - Coin, Execution Price
-#   - Trade Size (USD, Tokens)
-#   - Closed PnL, Fees, Net PnL
-#   - Execution type (Crossed: Market vs Limit)
-#   - Timestamp
-#
-# Market sentiment data:
-#   - Daily Fear & Greed Index value
-#   - Sentiment classification:
-#       Extreme Fear, Fear, Neutral, Greed, Extreme Greed
+The analysis is performed at the per-trade level, preserving behavioral signals that are lost in heavy aggregation.
 
-# ------------------------------------------------------------
-# 🔧 Data Processing Overview
-# ------------------------------------------------------------
-# - Trades were merged with daily sentiment data by date
-# - Non-informative fields (accounts, IDs, hashes) were removed
-# - Analysis retained per-trade granularity
-# - Sentiment was ordinally encoded for correlation analysis
+## 🔧 Data Preparation
 
-# ------------------------------------------------------------
-# 📈 Key Visual Insights
-# ------------------------------------------------------------
+- Converted timestamps to dates
+- Merged trades with Fear & Greed data on date
+- Removed non-informative columns (account IDs, hashes, etc.)
+- Preserved per-trade granularity to avoid information loss
+- Encoded sentiment ordinally for correlation analysis
 
-# ============================================================
-# 1️⃣ Trade Size vs Market Sentiment
-# ============================================================
+## 📈 Key Analyses & Visualizations
 
-# ![Trade Size vs Market Sentiment](screenshots/trade_size_vs_sentiment.png)
+### 1️⃣ Trade Size vs Market Sentiment
 
-# Observations:
-# - Trade size increases during Greed and Extreme Greed
-# - Neutral sentiment shows smaller, conservative positions
-# - All regimes show long-tailed distributions
+![alt text](image.png)
 
-# Insight:
-# Traders tend to increase position size as market optimism rises.
+Neutral periods show smaller, more conservative trades
 
-# ============================================================
-# 2️⃣ Aggressive Trading (Market Orders) by Sentiment
-# ============================================================
+**📌 Insight:**
 
-# ![Aggressive Trading by Sentiment](screenshots/aggressive_trading_by_sentiment.png)
+Traders increase position size as sentiment becomes optimistic.
 
-# Observations:
-# - Market orders are more frequent during Fear and Greed
-# - Extreme sentiment regimes show reduced execution aggression
-# - Neutral sentiment reflects balanced execution behavior
+### 2️⃣ Aggressive Trading (Market Orders) by Sentiment
 
-# Insight:
-# Traders become more aggressive in emotionally charged markets,
-# prioritizing speed over price.
+Measured using the Crossed flag
 
-# ============================================================
-# 3️⃣ Win Rate by Market Sentiment
-# ============================================================
+![alt text](image-1.png)
 
-# ![Win Rate by Sentiment](screenshots/win_rate_by_sentiment.png)
+**📌 Insight:**
 
-# Observations:
-# - Extreme Greed shows the highest win rate
-# - Extreme Fear shows the lowest win rate
-# - Neutral sentiment lies between the two extremes
+Execution style adapts to sentiment — urgency rises during fear, patience during greed.
 
-# Insight:
-# Trend-following environments (Extreme Greed) improve the
-# probability of winning trades, while fearful markets reduce it.
+### 3️⃣ Win Rate by Market Sentiment
 
-# ============================================================
-# 4️⃣ Risk-Adjusted Performance (Sharpe-like Ratio)
-# ============================================================
+| Sentiment         | Win Rate (%) |
+| ----------------- | ------------ |
+| Extreme Fear      | ~38%         |
+| Fear              | ~42%         |
+| Neutral           | ~45%         |
+| Greed             | ~42%         |
+| **Extreme Greed** | **~56%**     |
 
-# ![Risk Adjusted Performance](screenshots/risk_adjusted_performance.png)
+**📌 Insight:**
 
-# Observations:
-# - Extreme Greed has the highest risk-adjusted performance
-# - Neutral sentiment offers stable but moderate returns
-# - Extreme Fear has the worst risk-adjusted profile
+Extreme Greed shows the highest win probability, likely due to trend continuation.
 
-# Insight:
-# Profitability alone is misleading — Extreme Greed provides
-# the best balance between return and volatility.
+### 4️⃣ Risk-Adjusted Performance (Sharpe-like Ratio)
 
-# ============================================================
-# 5️⃣ Loss Severity Analysis (Median Loss)
-# ============================================================
+Mean(Net PnL) / Std(Net PnL)
 
-# ![Median Loss by Sentiment](screenshots/median_loss_by_sentiment.png)
+| Sentiment         | Sharpe-like |
+| ----------------- | ----------- |
+| **Extreme Greed** | **Highest** |
+| Neutral           | Moderate    |
+| Fear              | Low         |
+| Greed             | Low         |
+| **Extreme Fear**  | **Lowest**  |
 
-# Observations:
-# - Extreme Fear and Greed show the largest median losses
-# - Neutral sentiment has the smallest median loss
-# - Fear produces frequent but relatively smaller losses
+**📌 Insight:**
 
-# Insight:
-# Neutral sentiment environments are best for capital protection,
-# while extreme sentiment regimes increase downside risk.
+Extreme Greed provides the best risk-adjusted environment.
+Extreme Fear is highly volatile and risky.
 
-# ============================================================
-# 6️⃣ Feature Correlation with Market Sentiment
-# ============================================================
+### 5️⃣ Loss Severity Analysis (Median Loss)
 
-# ![Feature Correlation Heatmap](screenshots/feature_correlation_heatmap.png)
+| Sentiment     | Median Loss  |
+| ------------- | ------------ |
+| Extreme Fear  | Largest      |
+| Greed         | Large        |
+| Fear          | Moderate     |
+| Extreme Greed | Smaller      |
+| **Neutral**   | **Smallest** |
 
-# Observations:
-# - Market sentiment has near-zero linear correlation with Net PnL
-# - Strong correlation exists between trade size and fees
-# - Weak correlations with execution aggressiveness
+**📌 Insight:**
 
-# Insight:
-# Market sentiment does not directly predict returns; it
-# influences trader behavior, which indirectly impacts outcomes.
+Neutral sentiment minimizes downside risk and protects capital.
 
-# ------------------------------------------------------------
-# 🧠 Key Takeaways
-# ------------------------------------------------------------
-# - Market sentiment affects HOW traders trade, not price direction
-# - Behavioral variables respond more strongly to sentiment
-#   than raw profitability
-# - Extreme Greed offers the best risk-adjusted environment
-# - Extreme Fear is highly volatile and dangerous
-# - Fear & Greed Index is best used as a behavioral context filter
+### 6️⃣ Execution Strategy × Sentiment (High-Value Finding)
 
-# ------------------------------------------------------------
-# 📁 Screenshots Directory
-# ------------------------------------------------------------
-# screenshots/
-# ├── trade_size_vs_sentiment.png
-# ├── aggressive_trading_by_sentiment.png
-# ├── win_rate_by_sentiment.png
-# ├── risk_adjusted_performance.png
-# ├── median_loss_by_sentiment.png
-# └── feature_correlation_heatmap.png
-# ============================================================
+Mean PnL & Win Rate split by execution type:
+
+Market orders perform better in Fear & Neutral
+
+Limit orders outperform in Greed & Extreme Greed
+
+![alt text](image-2.png)
+
+**📌 Insight:**
+
+Extreme Fear resembles a high-variance gambling regime, while Extreme Greed offers consistent upside.
+
+## 🔍 Correlation Analysis
+
+Market sentiment shows weak linear correlation with Net PnL
+
+Stronger relationships exist with:
+
+- Trade size
+- Execution aggressiveness
+- Risk characteristics
+
+![alt text](image-3.png)
+
+**📌 Conclusion:**
+
+Sentiment does not directly predict returns, but strongly influences trader behavior, which in turn affects outcomes.
+
+## 🧠 Key Takeaways
+
+- Market sentiment is best used as a behavioral filter, not a price predictor
+- Extreme Greed is the most favorable regime for:
+  - Risk-adjusted returns
+  - Win rate
+- Extreme Fear is the most dangerous due to:
+  - High volatility
+  - Large losses
+- Execution strategy and position sizing should adapt dynamically to sentiment
